@@ -8,9 +8,6 @@ import com.action.amp.ampremotedesk.app.BaseView;
 
 import java.nio.ByteBuffer;
 
-/**
- * Created by tianluhua on 2017/8/17 0017.
- */
 public interface ClientContract {
 
 

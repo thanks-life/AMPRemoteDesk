@@ -1,8 +1,6 @@
 package com.action.amp.ampremotedesk.app;
 
-/**
- * Created by Administrator on 2017/8/18 0018.
- */
+
 public class Config {
     /**
      * 调试开关

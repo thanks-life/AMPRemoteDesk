@@ -9,9 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-/**
- * Created by tianluhua on 2017/8/18 0018.
- */
+
 public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
 

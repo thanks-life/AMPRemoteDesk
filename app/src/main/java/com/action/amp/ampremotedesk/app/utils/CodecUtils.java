@@ -5,9 +5,7 @@ import android.media.MediaCodecList;
 
 import java.nio.ByteBuffer;
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 public class CodecUtils {
 
     public static final int WIDTH = 1080 / 4;

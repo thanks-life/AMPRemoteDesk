@@ -5,13 +5,10 @@ import com.action.amp.ampremotedesk.R;
 import com.action.amp.ampremotedesk.app.BaseFragmentActivity;
 import com.action.amp.ampremotedesk.app.utils.ActivityUtils;
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 public class ClientActivity extends BaseFragmentActivity {
 
 
-    @Override
     protected void initFragment() {
         ClientFragment clentFragment = (ClientFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
@@ -23,7 +20,6 @@ public class ClientActivity extends BaseFragmentActivity {
         new ClientPresenter(clentFragment,this);
     }
 
-    @Override
     protected int getContentLayID() {
         return R.layout.client_act;
     }

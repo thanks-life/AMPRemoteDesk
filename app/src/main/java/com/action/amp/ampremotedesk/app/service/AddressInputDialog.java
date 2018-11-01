@@ -24,9 +24,7 @@ import com.action.amp.ampremotedesk.app.utils.netTools.model.Device;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 public class AddressInputDialog extends DialogFragment {
 
     public static final String KEY_ADDRESS_EXTRA = "address";
@@ -49,29 +47,29 @@ public class AddressInputDialog extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         builder.setTitle("Enter server address");
         builder.setView(dialogLayout)
-                // Add action buttons
-                .setPositiveButton("Connect", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        String address = addressInput.getText().toString();
-                        if (!address.equals("")) {
-                            Intent startIntent = new Intent(getActivity(), ClientActivity.class);
-                            startIntent.putExtra(KEY_ADDRESS_EXTRA, address);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putString(KEY_LAST_ADDRESS_PREF, address);
-                            editor.commit();
-                            startActivity(startIntent);
-                        }
+            // Add action buttons
+            .setPositiveButton("Connect", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    String address = addressInput.getText().toString();
+                    if (!address.equals("")) {
+                        Intent startIntent = new Intent(getActivity(), ClientActivity.class);
+                        startIntent.putExtra(KEY_ADDRESS_EXTRA, address);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString(KEY_LAST_ADDRESS_PREF, address);
+                        editor.commit();
+                        startActivity(startIntent);
                     }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        AddressInputDialog.this.getDialog().cancel();
-                    }
-                }).setNeutralButton("Scanner", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                new ScannerIPTask().execute();
+                }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    AddressInputDialog.this.getDialog().cancel();
+                }
+            })
+            .setNeutralButton("Scanner", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    new ScannerIPTask().execute();
             }
         });
         return builder.create();

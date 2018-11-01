@@ -25,21 +25,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="150dp">
 
-            <TextView
-                    android:id="@+id/description_server"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/description"
-                    android:text="@string/description_server"/>
+            <!--<TextView-->
+                    <!--android:id="@+id/description_server"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:textStyle="italic"-->
+                    <!--android:textColor="@color/description"-->
+                    <!--android:text="@string/description_server"/>-->
 
             <Button
                     android:layout_below="@id/description_server"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button"
-                    style="@style/button"
                     android:text="Start Server"
                     android:layout_centerHorizontal="true"
                     android:onClick="startServer"/>
@@ -52,21 +50,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="150dp">
 
-            <TextView
-                    android:id="@+id/description_client"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/description"
-                    android:text="@string/description_client"/>
+            <!--<TextView-->
+                    <!--android:id="@+id/description_client"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:textStyle="italic"-->
+                    <!--android:textColor="@color/description"-->
+                    <!--android:text="@string/description_client"/>-->
 
             <Button
                     android:id="@+id/start_client_button"
                     android:layout_below="@id/description_client"
                     android:text="Start Client"
-                    android:background="@drawable/button"
-                    style="@style/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -74,6 +70,7 @@
 
         </RelativeLayout>
 
+<!--
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,6 +97,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/note_4"/>
         </LinearLayout>
+-->
 
     </RelativeLayout>
 </ScrollView>

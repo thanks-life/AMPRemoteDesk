@@ -11,9 +11,7 @@ import android.widget.Toast;
 import com.action.amp.ampremotedesk.app.utils.HideSystemUIUtils;
 
 
-/**
- * Created by tianluhua on 2017/8/18 0018.
- */
+
 public abstract class BaseFragmentActivity extends FragmentActivity implements View.OnClickListener {
 
     private boolean mAllowFullScreen = true;

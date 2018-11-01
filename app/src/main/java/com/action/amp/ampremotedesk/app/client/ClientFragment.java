@@ -17,9 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-/**
- * Created by tianluhua on 2017/8/18 0018.
- */
+
 public class ClientFragment extends BaseFragment implements ClientContract.View, SurfaceHolder.Callback, View.OnTouchListener {
 
     private static final String TAG = "ClientFragment";
@@ -108,7 +106,6 @@ public class ClientFragment extends BaseFragment implements ClientContract.View,
         return true;
     }
 
-
     @Override
     public void showToast(final String msg) {
         getActivity().runOnUiThread(new Runnable() {
@@ -117,7 +114,6 @@ public class ClientFragment extends BaseFragment implements ClientContract.View,
                 Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     @Override

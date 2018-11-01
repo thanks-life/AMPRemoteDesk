@@ -27,9 +27,7 @@ import com.action.amp.ampremotedesk.app.service.AddressInputDialog;
 import com.action.amp.ampremotedesk.app.service.ServerService;
 import com.action.amp.ampremotedesk.app.settings.SettingActivity;
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 public class MainActivity extends Activity implements MainContract.View {
 
     public static final String TAG = "MainActivity";
@@ -39,10 +37,10 @@ public class MainActivity extends Activity implements MainContract.View {
     private MainContract.Presenter presenter;
 
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mMediaProjectionManager = (MediaProjectionManager)
                     getSystemService(Context.MEDIA_PROJECTION_SERVICE);
@@ -51,7 +49,6 @@ public class MainActivity extends Activity implements MainContract.View {
 
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Config.MediaProjection.REQUEST_MEDIA_PROJECTION) {
             if (resultCode != Activity.RESULT_OK) {
@@ -75,7 +72,6 @@ public class MainActivity extends Activity implements MainContract.View {
         } else {
             new StartServerServiceDialog().show(getFragmentManager(), "Start service");
         }
-
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -88,7 +84,6 @@ public class MainActivity extends Activity implements MainContract.View {
     @Override
     public void setPresenter(MainContract.Presenter presenter) {
         this.presenter = presenter;
-
     }
 
     @SuppressLint("ValidFragment")
@@ -112,4 +107,6 @@ public class MainActivity extends Activity implements MainContract.View {
             return builder.create();
         }
     }
+
+
 }

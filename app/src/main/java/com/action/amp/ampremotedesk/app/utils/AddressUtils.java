@@ -10,9 +10,7 @@ import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 public class AddressUtils {
 
     /**

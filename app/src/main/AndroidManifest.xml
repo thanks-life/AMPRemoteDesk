@@ -18,15 +18,17 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".app.main.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.action.amp.ampremotedesk.app.client.ClientActivity"
             android:label="@string/title_activity_client"
@@ -40,6 +42,7 @@
             android:name="com.action.amp.ampremotedesk.app.service.ServerService"
             android:exported="true"
             android:label="@string/title_activity_server" />
+
         <activity
             android:name=".app.settings.SettingActivity"
             android:label="Settings"
@@ -48,5 +51,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".app.main.MainActivity" />
         </activity>
+
     </application>
 </manifest>

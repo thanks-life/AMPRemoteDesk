@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 @SuppressLint("NewApi")
 public class VideoWindow extends LinearLayout implements SurfaceHolder.Callback{
 
@@ -97,11 +95,15 @@ public class VideoWindow extends LinearLayout implements SurfaceHolder.Callback{
         boolean outputDone = false;
 
         while(!decoderConfigured) {
+
         }
 
-            if (Config.DeBug.DEBUG) Log.d(TAG, "Decoder Configured");
+        if (Config.DeBug.DEBUG) 
+            Log.d(TAG, "Decoder Configured");
 
-        while(!firstIFrameAdded) {}
+        while(!firstIFrameAdded) {
+
+        }
 
         int index = encBuffer.getFirstIndex();
         if (index < 0) {

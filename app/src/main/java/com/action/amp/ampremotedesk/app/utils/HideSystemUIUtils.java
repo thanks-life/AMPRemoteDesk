@@ -3,9 +3,7 @@ package com.action.amp.ampremotedesk.app.utils;
 import android.app.Activity;
 import android.view.View;
 
-/**
- * Created by Administrator on 2017/8/17 0017.
- */
+
 public class HideSystemUIUtils {
     /**
      * Hide the status and navigation bars

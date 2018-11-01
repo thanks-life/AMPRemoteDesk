@@ -52,9 +52,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 public class ServerService extends Service {
 
     private static final String TAG = "ServerService";
@@ -111,7 +109,7 @@ public class ServerService extends Service {
             mDisplay.getRealSize(resolution);
             resolution.x = (int) (resolution.x * resolutionRatio);
             resolution.y = (int) (resolution.y * resolutionRatio);
-
+            Log.e("Server"," onStartCommand : LOCAL_DEBUG = "+LOCAL_DEBUG);
             if (!LOCAL_DEBUG) {
                 dataServer = new AsyncHttpServer();
                 dataServer.websocket("/", null, websocketCallback);
@@ -303,11 +301,12 @@ public class ServerService extends Service {
                                     encodedData.limit(info.offset + info.size);
                                     //下一个要被读或写的元素的索引，每次读写缓冲区数据时都会改变改值，为下次读写作准备
                                     encodedData.position(info.offset);
-                                   //get(byte[] dst, int offset, int length) 从position位置开始相对读，读length个byte，并写入dst下标从offset到offset+length的区域
+                                    //get(byte[] dst, int offset, int length) 从position位置开始相对读，读length个byte，并写入dst下标从offset到offset+length的区域。
                                     encodedData.get(b, info.offset, info.offset + info.size);
+                                    //Log.e(TAG,"QiyiByteBuffer : offset = "+info.offset+", (info.offset + info.size) = "+info.offset + info.size+", encodedData "+encodedData);
+                                    //Log.e(TAG,"QiyiByteBuffer : b = "+b);
                                     socket.send(b);
                                 }
-
                             } catch (BufferUnderflowException e) {
                                 e.printStackTrace();
                             }
@@ -319,11 +318,20 @@ public class ServerService extends Service {
                         }
                         videoWindow.setData(CodecUtils.clone(encodedData), info);
 
+                        /**
+                         当编解码器被立即刷新或start之后不久刷新，并且在任何输出buffer或输出格式变化被返回前需要特别地小心，因为编解码器的codec specific data可能会在flush过程中丢失。
+                         为保证编解码器的正常运行，你必须在刷新后使用标记为BUFFER_FLAG_CODEC_CONFIGbuffers的buffers再次提交这些数据。
+                         编码器（或者产生压缩数据的编解码器）将会在有效的输出缓存之前产生和返回编解码器指定的数据，这些数据会以codec-config flag进行标记。
+                         包含codec-specific-data的Buffers没有有意义的时间戳。
+                         */
+
+                        //注意：
                         if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                             Log.w(TAG, "config flag received");
                         }
                     }
 
+                    Log.d(TAG, "============flags|BUFFER_FLAG_END_OF_STREAM=============");
                     encoderDone = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
 
                     try {
@@ -364,62 +372,60 @@ public class ServerService extends Service {
                                 Log.d(TAG, "Main WebSocket closed");
                             }
                         });
-                        webSocket
-                                .setStringCallback(new WebSocket.StringCallback() {
-                                    @Override
-                                    public void onStringAvailable(String s) {
-                                        Log.d(TAG, "Received string = " + s);
-                                        try {
-                                            JSONObject touch = new JSONObject(s);
-                                            float x = Float.parseFloat(touch
-                                                    .getString(Config.TouchKey.KEY_EVENT_X))
-                                                    * ServerService.deviceWidth;
-                                            float y = Float.parseFloat(touch
-                                                    .getString(Config.TouchKey.KEY_EVENT_Y))
-                                                    * ServerService.deviceHeight;
-                                            String eventType = touch
-                                                    .getString(Config.TouchKey.KEY_EVENT_TYPE);
-                                            if (eventType
-                                                    .equals(Config.TouchKey.KEY_FINGER_DOWN)) {
-                                                input.injectMotionEvent(
-                                                        InputDeviceCompat.SOURCE_TOUCHSCREEN,
-                                                        0,
-                                                        SystemClock
-                                                                .uptimeMillis(),
-                                                        x, y, 1.0f);
-                                            } else if (eventType
-                                                    .equals(Config.TouchKey.KEY_FINGER_UP)) {
-                                                input.injectMotionEvent(
-                                                        InputDeviceCompat.SOURCE_TOUCHSCREEN,
-                                                        1,
-                                                        SystemClock
-                                                                .uptimeMillis(),
-                                                        x, y, 1.0f);
-                                            } else if (eventType
-                                                    .equals(Config.TouchKey.KEY_FINGER_MOVE)) {
-                                                input.injectMotionEvent(
-                                                        InputDeviceCompat.SOURCE_TOUCHSCREEN,
-                                                        2,
-                                                        SystemClock
-                                                                .uptimeMillis(),
-                                                        x, y, 1.0f);
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
+                        webSocket.setStringCallback(new WebSocket.StringCallback() {
+                            @Override
+                            public void onStringAvailable(String s) {
+                                Log.d(TAG, "Received string = " + s);
+                                try {
+                                    JSONObject touch = new JSONObject(s);
+                                    float x = Float.parseFloat(touch
+                                            .getString(Config.TouchKey.KEY_EVENT_X))
+                                            * ServerService.deviceWidth;
+                                    float y = Float.parseFloat(touch
+                                            .getString(Config.TouchKey.KEY_EVENT_Y))
+                                            * ServerService.deviceHeight;
+                                    String eventType = touch
+                                            .getString(Config.TouchKey.KEY_EVENT_TYPE);
+                                    if (eventType
+                                            .equals(Config.TouchKey.KEY_FINGER_DOWN)) {
+                                        input.injectMotionEvent(
+                                                InputDeviceCompat.SOURCE_TOUCHSCREEN,
+                                                0,
+                                                SystemClock
+                                                        .uptimeMillis(),
+                                                x, y, 1.0f);
+                                    } else if (eventType
+                                            .equals(Config.TouchKey.KEY_FINGER_UP)) {
+                                        input.injectMotionEvent(
+                                                InputDeviceCompat.SOURCE_TOUCHSCREEN,
+                                                1,
+                                                SystemClock
+                                                        .uptimeMillis(),
+                                                x, y, 1.0f);
+                                    } else if (eventType
+                                            .equals(Config.TouchKey.KEY_FINGER_MOVE)) {
+                                        input.injectMotionEvent(
+                                                InputDeviceCompat.SOURCE_TOUCHSCREEN,
+                                                2,
+                                                SystemClock
+                                                        .uptimeMillis(),
+                                                x, y, 1.0f);
                                     }
-                                });
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 });
         Log.d(TAG, "Touch server listening at port 6059");
         touchServer.listen(6059);
 
         if (input == null) {
-            Log.e(TAG, "THIS SHIT IS NULL");
+            Log.e(TAG, "this SHIT is null");
         } else {
-            Log.e(TAG, "THIS SHIT NOT NULL");
+            Log.e(TAG, "this SHIT is not null");
         }
-
         Log.d(TAG, "Waiting for main to finish");
     }
 
@@ -455,7 +461,6 @@ public class ServerService extends Service {
                         .setContentTitle(message)
                         .setContentText(AddressUtils.getIPAddress(true) + ":" + serverPort);
         startForeground(6000, mBuilder.build());
-
     }
 
     private void dispose() {

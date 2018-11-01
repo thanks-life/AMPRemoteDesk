@@ -10,9 +10,7 @@ import android.preference.PreferenceActivity;
 import com.action.amp.ampremotedesk.R;
 import com.action.amp.ampremotedesk.app.utils.HideSystemUIUtils;
 
-/**
- * Created by tianluhua on 21/7/17.
- */
+
 public class SettingActivity extends PreferenceActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 

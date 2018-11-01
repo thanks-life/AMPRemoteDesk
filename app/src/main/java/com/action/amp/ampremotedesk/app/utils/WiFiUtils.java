@@ -4,9 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-/**
- * Created by Administrator on 2017/8/21 0021.
- */
+
 public class WiFiUtils {
 
 

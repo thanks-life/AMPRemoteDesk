@@ -295,6 +295,13 @@ public class AsyncServer {
                         isa = new InetSocketAddress(port);
                     else
                         isa = new InetSocketAddress(host, port);
+
+                    if(host==null){
+                        Log.e("----remote bind : ","port = "+port);
+                    }else{
+                        Log.e("----remote bind : ","host = "+host+", port = "+port);
+                    }
+
                     server.socket().bind(isa);
                     final SelectionKey key = wrapper.register(mSelector.getSelector());
                     key.attach(handler);
@@ -303,16 +310,14 @@ public class AsyncServer {
                         public int getLocalPort() {
                             return server.socket().getLocalPort();
                         }
-
-                        @Override
-                        public void stop() {
-                            StreamUtility.closeQuietly(wrapper);
-                            try {
-                                key.cancel();
+                            @Override
+                            public void stop() {
+                                StreamUtility.closeQuietly(wrapper);
+                                try {
+                                    key.cancel();
+                                }catch (Exception e) {
+                                }
                             }
-                            catch (Exception e) {
-                            }
-                        }
                     });
                 }
                 catch (IOException e) {
@@ -782,40 +787,37 @@ public class AsyncServer {
                         if (ckey != null)
                             ckey.cancel();
                     }
-                }
-                else if (key.isReadable()) {
+                }else if (key.isReadable()) {
                     AsyncNetworkSocket handler = (AsyncNetworkSocket) key.attachment();
                     int transmitted = handler.onReadable();
                     server.onDataReceived(transmitted);
-                }
-                else if (key.isWritable()) {
+                }else if (key.isWritable()) {
                     AsyncNetworkSocket handler = (AsyncNetworkSocket) key.attachment();
                     handler.onDataWritable();
-                }
-                else if (key.isConnectable()) {
+                }else if (key.isConnectable()) {
                     ConnectFuture cancel = (ConnectFuture) key.attachment();
                     SocketChannel sc = (SocketChannel) key.channel();
                     key.interestOps(SelectionKey.OP_READ);
                     AsyncNetworkSocket newHandler;
+
                     try {
                         sc.finishConnect();
                         newHandler = new AsyncNetworkSocket();
                         newHandler.setup(server, key);
                         newHandler.attach(sc, (InetSocketAddress)sc.socket().getRemoteSocketAddress());
                         key.attach(newHandler);
-                    }
-                    catch (IOException ex) {
+                    }catch (IOException ex) {
                         key.cancel();
                         StreamUtility.closeQuietly(sc);
                         if (cancel.setComplete(ex))
                             cancel.callback.onConnectCompleted(ex, null);
                         continue;
                     }
+
                     try {
                         if (cancel.setComplete(newHandler))
                             cancel.callback.onConnectCompleted(null, newHandler);
-                    }
-                    catch (Exception e) {
+                    }catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }

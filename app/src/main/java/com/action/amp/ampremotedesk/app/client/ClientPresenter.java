@@ -21,9 +21,7 @@ import com.koushikdutta.async.http.WebSocket;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-/**
- * Created by tianluhua on 2017/8/17 0017.
- */
+
 public class ClientPresenter implements ClientContract.Presenter {
 
     private boolean firstIFrameAdded;
@@ -61,24 +59,28 @@ public class ClientPresenter implements ClientContract.Presenter {
                     doDecoderThingie();
                 }
             }).start();
-            AsyncHttpClient.getDefaultInstance().websocket("ws://" + address, null, new AsyncHttpClient
-                    .WebSocketConnectCallback() {
-                @Override
-                public void onCompleted(final Exception ex, WebSocket webSocket) {
 
+            Log.e("Client","ClientPresenter -> websocket start connect "+address);
+            AsyncHttpClient.getDefaultInstance().websocket("ws://" + address  + ":6060", null, new AsyncHttpClient
+                    .WebSocketConnectCallback() {
+
+                public void onCompleted(final Exception ex, WebSocket webSocket) {
                     if (ex != null) {
                         ex.printStackTrace();
                         return;
                     }
                     dataSocket = webSocket;
                     view.showToast("Connection Completed");
+                    Log.e("Client","ClientPresenter -> Connection <Completed> : "+address);
+
                     webSocket.setClosedCallback(new CompletedCallback() {
-                        @Override
                         public void onCompleted(Exception e) {
                             dataSocket = null;
-                            view. showToast("Closed");
+                            view.showToast("Closed");
+                            Log.e("Client","ClientPresenter -> onCompleted <Closed> : "+address);
                         }
                     });
+
                     webSocket.setStringCallback(new WebSocket.StringCallback() {
                         public void onStringAvailable(String s) {
                             String[] parts = s.split(",");
@@ -91,19 +93,21 @@ public class ClientPresenter implements ClientContract.Presenter {
                                     videoResolution.x = Integer.parseInt(parts[4]);
                                     videoResolution.y = Integer.parseInt(parts[5]);
                                 }
+                                Log.e("Client","ClientPresenter -> onStringAvailable : "+address);
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
                                 Log.d(TAG, "===========Exception = " + e.getMessage() + " =================");
                                 view.showToast(e.getMessage());
                             }
-
                         }
                     });
+
                     webSocket.setDataCallback(new DataCallback() {
                         @Override
                         public void onDataAvailable(DataEmitter dataEmitter, ByteBufferList byteBufferList) {
                             ++i;
                             ByteBuffer b = byteBufferList.getAll();
+                            Log.e("Client","ClientPresenter -> onDataAvailable Received buffer : "+address);
                             Log.d("tlh", "Received buffer = " + b);
                             if (i % 2 == 0) {
                                 String temp = new String(b.array());
@@ -117,27 +121,33 @@ public class ClientPresenter implements ClientContract.Presenter {
                             byteBufferList.recycle();
                         }
                     });
+
                 }
             });
-            String ip = address.split(":")[0];
+
+
+            final String ip = address.split(":")[0];
+
+
             view.showToast("IP = " + ip);
+            Log.e("Client","ClientPresenter -> websocket start connect "+ip+", 6059");
             AsyncHttpClient.getDefaultInstance().websocket("ws://" + ip + ":6059", null,
-                    new AsyncHttpClient.WebSocketConnectCallback() {
-                        @Override
-                        public void onCompleted(Exception ex, WebSocket tSocket) {
-                            if (ex != null) {
-                                ex.printStackTrace();
-                                view. showToast(ex.getMessage());
-                                return;
-                            }
-                            touchSocket = tSocket;
+                new AsyncHttpClient.WebSocketConnectCallback() {
+                    public void onCompleted(Exception ex, WebSocket tSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            view.showToast(ex.getMessage());
+                            Log.e("Client","ClientPresenter -> onCompleted : "+ip+":6059, Exception : "+ex.getMessage());
+                            return;
+                        }else{
+                            Log.e("Client","ClientPresenter -> onCompleted : "+ip+":6059, Exception is null");
                         }
-                    });
+                        touchSocket = tSocket;
+                    }
+                });
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     /**
@@ -154,6 +164,7 @@ public class ClientPresenter implements ClientContract.Presenter {
         if (Config.DeBug.DEBUG) Log.d(TAG, "Decoder Configured");
 
         while (!firstIFrameAdded) {
+
         }
 
         if (Config.DeBug.DEBUG) Log.d(TAG, "Main Body");
@@ -167,7 +178,7 @@ public class ClientPresenter implements ClientContract.Presenter {
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         while (!outputDone) {
             encodedFrames = encBuffer.getChunk(index, info);
-            encodedFrames.limit(info.size + info.offset);
+            encodedFrames.limit(info.offset +info.size);
             encodedFrames.position(info.offset);
 
             try {
@@ -188,14 +199,15 @@ public class ClientPresenter implements ClientContract.Presenter {
             if (decoderConfigured) {
                 int decoderStatus = decoder.dequeueOutputBuffer(info, CodecUtils.TIMEOUT_USEC);
                 if (decoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                    if (Config.DeBug.DEBUG) Log.d(TAG, "no output from decoder available");
+                    if (Config.DeBug.DEBUG)
+                        Log.d(TAG, "no output from decoder available");
                 } else if (decoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    if (Config.DeBug.DEBUG) Log.d(TAG, "decoder output buffers changed");
+                    if (Config.DeBug.DEBUG)
+                        Log.d(TAG, "decoder output buffers changed");
                 } else if (decoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     // this happens before the first frame is returned
                     MediaFormat decoderOutputFormat = decoder.getOutputFormat();
-                    Log.d(TAG, "decoder output format changed: " +
-                            decoderOutputFormat);
+                    Log.d(TAG, "decoder output format changed: " + decoderOutputFormat);
                 } else {
                     decoder.releaseOutputBuffer(decoderStatus, true);
                 }
@@ -204,7 +216,6 @@ public class ClientPresenter implements ClientContract.Presenter {
     }
 
 
-    @Override
     public void setData(ByteBuffer encodedFrame, MediaCodec.BufferInfo info, Surface surface) {
         if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
             Log.d(TAG, "Configuring Decoder");
@@ -218,14 +229,16 @@ public class ClientPresenter implements ClientContract.Presenter {
         }
 
         encBuffer.add(encodedFrame, info.flags, info.presentationTimeUs);
-        if (Config.DeBug.DEBUG) Log.d(TAG, "Adding frames to the Buffer");
+        if (Config.DeBug.DEBUG)
+            Log.d(TAG, "Adding frames to the Buffer");
+
         if ((info.flags & MediaCodec.BUFFER_FLAG_KEY_FRAME) != 0) {
             firstIFrameAdded = true;
-            if (Config.DeBug.DEBUG) Log.d(TAG, "First I-Frame added");
+            if (Config.DeBug.DEBUG)
+                Log.d(TAG, "First I-Frame added");
         }
     }
 
-    @Override
     public void sendtouchData(String toucuString) {
         if (touchSocket != null) {
             touchSocket.send(toucuString);
@@ -233,4 +246,5 @@ public class ClientPresenter implements ClientContract.Presenter {
             Log.e(TAG, "Can't send touch events. Socket is null.");
         }
     }
+
 }
